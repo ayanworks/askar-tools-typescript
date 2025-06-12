@@ -13,7 +13,7 @@ program
     "--strategy <strategy>",
     "Specify strategy to be used. Choose from 'mt-convert-to-mw', or 'import-tenant'.",
     (value) => {
-      if (!["mt-convert-to-mw", "import-tenant","export"].includes(value)) {
+      if (!["mt-convert-to-mw", "import-tenant", "export"].includes(value)) {
         throw new Error(
           "Invalid strategy. Choose from 'mt-convert-to-mw', or 'import-tenant'."
         )
@@ -49,6 +49,19 @@ program
     "Specify password for postgres storage."
   )
   .option("--tenant-id <id>", "Specify tenant-id to be migrated.")
+  .option(
+    "--database-scheme <scheme>",
+    "Specify database scheme to be migrated. Choose from 'DatabasePerWallet' or 'ProfilePerWallet'.",
+    (value) => {
+      if (!["DatabasePerWallet", "ProfilePerWallet"].includes(value)) {
+        throw new Error(
+          "Invalid database scheme. Choose from 'DatabasePerWallet' or 'ProfilePerWallet'."
+        )
+      }
+      return value
+    },
+    "ProfilePerWallet"
+  )
 
 const main = async () => {
   const options = program.opts()
@@ -57,13 +70,10 @@ const main = async () => {
 
   let method
   let exporterMethod
+  let storageType:| AskarWalletPostgresStorageConfig| AskarWalletSqliteStorageConfig
 
   switch (options.strategy) {
     case "export":
-      let storageType:
-        | AskarWalletPostgresStorageConfig
-        | AskarWalletSqliteStorageConfig
-
       if (options.storageType === "postgres") {
         storageType = {
           type: "postgres",
@@ -89,10 +99,10 @@ const main = async () => {
           storage: storageType,
         },
         tenantId: options.tenantId,
+        databaseScheme: options.databaseScheme,
       })
       await exporterMethod.export()
       break
-
     case "mt-convert-to-mw":
       let storage:
         | AskarWalletPostgresStorageConfig

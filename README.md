@@ -32,6 +32,20 @@ pnpm cli --strategy export \
     --tenant-id <tenant-id>
 ```
 
+### Export Database Per Wallet
+
+Export a tenant wallet from DB per wallet to a JSON file:
+```bash
+pnpm cli --strategy export \
+    --wallet-id <wallet-id> \
+    --wallet-key <wallet-key> \
+    --storage-type <sqlite|postgres> \
+    [--postgres-host <host>] \
+    [--postgres-username <username>] \
+    [--postgres-password <password>] \
+    --tenant-id <tenant-id>
+```
+
 ### Convert Single Wallet to Multi-Wallet
 
 Convert profiles in a sub-wallet to individual wallets:
